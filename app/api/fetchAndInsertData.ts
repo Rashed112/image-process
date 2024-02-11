@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 
 export const query = gql`
     query {
-        products(first: 10){
+        products(first: 20){
             edges {
                 node {
                     id

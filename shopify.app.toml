@@ -3,7 +3,7 @@
 client_id = "e8a02c709cbb6126f973d27f396029bf"
 name = "image-process"
 handle = "image-process"
-application_url = "https://dh-secretariat-progress-communist.trycloudflare.com"
+application_url = "https://auckland-feel-msie-describe.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products,read_products,read_orders,read_inventory,write_discount
 
 [auth]
 redirect_urls = [
-  "https://dh-secretariat-progress-communist.trycloudflare.com/auth/callback",
-  "https://dh-secretariat-progress-communist.trycloudflare.com/auth/shopify/callback",
-  "https://dh-secretariat-progress-communist.trycloudflare.com/api/auth/callback"
+  "https://auckland-feel-msie-describe.trycloudflare.com/auth/callback",
+  "https://auckland-feel-msie-describe.trycloudflare.com/auth/shopify/callback",
+  "https://auckland-feel-msie-describe.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
