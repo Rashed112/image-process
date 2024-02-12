@@ -1,53 +1,35 @@
-import { LoaderFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { fetchAndInsertProducts, getProductsFromDB } from "../api/fetchAndInsertData";
-import { DataTable, Page, Modal, Button, Pagination } from "@shopify/polaris";
-import { useCallback, useState } from "react";
+import React, { useState } from 'react';
+import { LoaderFunction } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
+import { fetchAndInsertProducts, getProductsFromDB } from '../api/fetchAndInsertData';
+import { Button, Card, Modal, Page } from '@shopify/polaris';
 
 export const loader: LoaderFunction = async ({ request }) => {
   await fetchAndInsertProducts(request);
   const storedProducts = await getProductsFromDB();
-  console.log("hello from inserting into db", storedProducts);
+  console.log('hello from inserting into db', storedProducts);
   return storedProducts;
+};
+
+interface Product {
+  id: string;
+  title: string;
+  imageUrl: string | null;
+  isRenamed: boolean;
+  isCrushed: boolean;
 }
 
 export default function Dashboard() {
   const products = useLoaderData<typeof loader>();
-  const itemsPerPage = 5; // Adjust as needed
-  const [currentPage, setCurrentPage] = useState(1);
+  const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedImageFileName, setSelectedImageFileName] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
-  const handleImageClick = useCallback((imageUrl: string) => {
-    setSelectedImage(imageUrl);
-    const fileName = getFileNameFromUrl(imageUrl);
-    setSelectedImageFileName(fileName);
-  }, []);
-
-  const handleCloseModal = useCallback(() => {
-    setSelectedImage(null);
-    setSelectedImageFileName(null);
-  }, []);
-
-  const getFileNameFromUrl = (url: string) => {
-    const path = url.split('/');
-    const fileNameWithQueryParams = path[path.length - 1]; // Get the file name with query parameters
-    const fileNameParts = fileNameWithQueryParams.split('?'); // Split the file name and query parameters
-    const fileName = fileNameParts[0]; // Get the file name without query parameters
-    return fileName;
-};
-
-  interface Product {
-    id: string;
-    title: string;
-    imageUrl: string | null;
-    isRenamed: boolean;
-    isCrushed: boolean;
-  }
-
-  const handleDetailsClick = (product: Product) => {
-    // Handle details button click action
-    console.log("Details button clicked for product:", product);
+  const handleDetailsClick = (productId: string) => {
+    setExpandedProductId((prevId) => (prevId === productId ? null : productId));
+    
   };
 
   const handleCrushClick = (product: Product) => {
@@ -55,48 +37,102 @@ export default function Dashboard() {
     console.log("Crush button clicked for product:", product);
   };
 
+  const handleCloseModal = () => {
+    setSelectedImage(null);
+    setSelectedImageFileName(null);
+  };
+
+  const handleImageClick = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
+    setSelectedImageFileName(getFileNameFromUrl(imageUrl));
+  };
+
+  const handlePaginationClick = (newPage: number) => {
+    const nextPage = Math.max(1, Math.min(newPage, totalPages)); // Ensure the new page is within the valid range
+  
+    setCurrentPage(nextPage);
+    setExpandedProductId(null);
+  };
+  
+
+  const getFileNameFromUrl = (url: string) => {
+    const path = url.split('/');
+    const fileNameWithQueryParams = path[path.length - 1];
+    const fileNameParts = fileNameWithQueryParams.split('?');
+    const fileName = fileNameParts[0];
+    return fileName;
+  };
+
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedProducts = products.slice(startIndex, endIndex);
 
-  const rows = paginatedProducts.map((product: Product) => [
-    product.imageUrl ? (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        
-        <img
-          src={product.imageUrl}
-          alt={product.title}
-          style={{ cursor: 'pointer', maxWidth: '50px', maxHeight: '50px' }}
-          onClick={() => handleImageClick(product.imageUrl!)}
-        />
-        <div style={{ width:'150px', overflowWrap:'break-word', marginRight: '8px', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{getFileNameFromUrl(product.imageUrl)}</div>
-      </div>
-    ) : null,
-
-    product.title,
-    product.isRenamed ? 'Renamed' : 'Not Renamed',
-    product.isCrushed ? 'Crushed' : 'Not Crushed',
-
-    <div>
-      <Button onClick={() => handleDetailsClick(product)}>Details</Button>
-      <Button onClick={() => handleCrushClick(product)}>Crush</Button>
-    </div>
-  ]);
-
-  const handlePaginationClick = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
 
   return (
     <Page title="Products">
-      <DataTable
-        columnContentTypes={['text', 'text', 'text', 'text', 'text']}
-        headings={['Image', 'Title', 'Renamed', 'Crushed', '']}
-        rows={rows}
-        verticalAlign="middle"
-        footerContent={
-          <div style={{ textAlign: 'center', marginTop: '16px' }}>
+      <div style={{ alignItems: 'center', flexDirection: 'column' }}>
+        <div style={{ padding: '16px' }}>
+          <Card>
+            <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+              <thead>
+                <tr>
+                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Image</th>
+                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Title</th>
+                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Renamed</th>
+                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Crushed</th>
+                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedProducts.map((product: Product) => (
+                  <React.Fragment key={product.id}>
+                    <tr>
+                      <td style={{ height: '50px', padding: '5px', border: '1px solid #ccc' }}>
+                        {product.imageUrl && (
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <img
+                              src={product.imageUrl}
+                              alt={product.title}
+                              style={{ cursor: 'pointer', maxWidth: '50px', maxHeight: '50px' }}
+                              onClick={() => handleImageClick(product.imageUrl!)}
+                            />
+                            <div style={{ width: '150px', overflowWrap: 'break-word', marginLeft: '8px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {getFileNameFromUrl(product.imageUrl)}
+                            </div>
+                          </div>
+                        )}
+                        {!product.imageUrl && (
+                          <div style={{ width: '50px', height: '50px', backgroundColor: '#f0f0f0' }}></div>
+                        )}
+                      </td>
+
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{product.title}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{product.isRenamed ? 'Renamed' : 'Not Renamed'}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{product.isCrushed ? 'Crushed' : 'Not Crushed'}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                        <Button onClick={() => handleDetailsClick(product.id)}>Details</Button>
+                        <Button onClick={() => handleCrushClick(product)}>Crush</Button>
+                      </td>
+                    </tr>
+                    {expandedProductId === product.id && (
+                      <tr key={`${product.id}-details`}>
+                        <td colSpan={5} style={{ border: '1px solid #ddd', padding: '8px' }}>
+                          <p>Additional details for product {product.id}</p>
+                          {/* Your additional details content goes here */}
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
+          </Card>
+        </div>
+        
+
+       
+          <div style={{ textAlign: 'center', padding:'16px' }}>
             <button
               onClick={() => handlePaginationClick(currentPage - 1)}
               disabled={currentPage === 1}
@@ -128,13 +164,14 @@ export default function Dashboard() {
               Next
             </button>
           </div>
-        }
-      />
-      
+
+         
+      </div>
+  
       <Modal
         open={!!selectedImage}
         onClose={handleCloseModal}
-        title={selectedImageFileName || ""}
+        title={selectedImageFileName || ''}
         primaryAction={{
           content: 'Close',
           onAction: handleCloseModal,
@@ -142,10 +179,17 @@ export default function Dashboard() {
       >
         <Modal.Section>
           {selectedImage && (
-            <img src={selectedImage} alt="Large Image" style={{ maxWidth: '100%', maxHeight: '100%', objectFit:'fill' }} />
+            <img
+              src={selectedImage}
+              alt="Large Image"
+              style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'fill' }}
+            />
           )}
         </Modal.Section>
       </Modal>
+  
+      
     </Page>
   );
+    
 }
