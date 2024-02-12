@@ -1,7 +1,7 @@
 import { LoaderFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { fetchAndInsertProducts, getProductsFromDB } from "../api/fetchAndInsertData";
-import { DataTable, Page, Modal, Button } from "@shopify/polaris";
+import { DataTable, Page, Modal, Button, Pagination } from "@shopify/polaris";
 import { useCallback, useState } from "react";
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -13,7 +13,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Dashboard() {
   const products = useLoaderData<typeof loader>();
-
+  const itemsPerPage = 5; // Adjust as needed
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedImageFileName, setSelectedImageFileName] = useState<string | null>(null);
 
@@ -54,7 +55,12 @@ export default function Dashboard() {
     console.log("Crush button clicked for product:", product);
   };
 
-  const rows = products.map((product: Product) => [
+  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedProducts = products.slice(startIndex, endIndex);
+
+  const rows = paginatedProducts.map((product: Product) => [
     product.imageUrl ? (
       <div style={{ display: 'flex', alignItems: 'center' }}>
         
@@ -78,6 +84,9 @@ export default function Dashboard() {
     </div>
   ]);
 
+  const handlePaginationClick = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
   return (
     <Page title="Products">
@@ -86,11 +95,42 @@ export default function Dashboard() {
         headings={['Image', 'Title', 'Renamed', 'Crushed', '']}
         rows={rows}
         verticalAlign="middle"
-        pagination={{
-          hasNext: false,
-          onNext: () => {},
-        }}
+        footerContent={
+          <div style={{ textAlign: 'center', marginTop: '16px' }}>
+            <button
+              onClick={() => handlePaginationClick(currentPage - 1)}
+              disabled={currentPage === 1}
+              style={{ margin: '0 4px', padding: '8px', border: '1px solid #ccc', borderRadius: '4px', background: '#fff', cursor: 'pointer' }}
+            >
+              Prev
+            </button>
+            {[currentPage, currentPage + 1].map((pageNumber) => (
+              <button
+                key={pageNumber}
+                onClick={() => handlePaginationClick(pageNumber)}
+                style={{
+                  margin: '0 4px',
+                  padding: '8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  background: currentPage === pageNumber ? '#e0e0e0' : 'transparent',
+                  cursor: 'pointer',
+                }}
+              >
+                {pageNumber}
+              </button>
+            ))}
+            <button
+              onClick={() => handlePaginationClick(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              style={{ margin: '0 4px', padding: '8px', border: '1px solid #ccc', borderRadius: '4px', background: '#fff', cursor: 'pointer' }}
+            >
+              Next
+            </button>
+          </div>
+        }
       />
+      
       <Modal
         open={!!selectedImage}
         onClose={handleCloseModal}
