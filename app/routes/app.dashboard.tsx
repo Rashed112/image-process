@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { LoaderFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { fetchAndInsertProducts, getProductsFromDB } from '../api/fetchAndInsertData';
-import { Button, Card, Modal, Page } from '@shopify/polaris';
+import { Button, Card, Grid, LegacyCard, Modal, Page } from '@shopify/polaris';
 
 export const loader: LoaderFunction = async ({ request }) => {
   await fetchAndInsertProducts(request);
@@ -77,8 +77,8 @@ export default function Dashboard() {
             <table style={{ borderCollapse: 'collapse', width: '100%' }}>
               <thead>
                 <tr>
-                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Image</th>
-                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Title</th>
+                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>File Name</th>
+                  
                   <th style={{ border: '1px solid #ddd', padding: '8px' }}>Renamed</th>
                   <th style={{ border: '1px solid #ddd', padding: '8px' }}>Crushed</th>
                   <th style={{ border: '1px solid #ddd', padding: '8px' }}>Actions</th>
@@ -107,7 +107,7 @@ export default function Dashboard() {
                         )}
                       </td>
 
-                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{product.title}</td>
+                      
                       <td style={{ border: '1px solid #ddd', padding: '8px' }}>{product.isRenamed ? 'Renamed' : 'Not Renamed'}</td>
                       <td style={{ border: '1px solid #ddd', padding: '8px' }}>{product.isCrushed ? 'Crushed' : 'Not Crushed'}</td>
                       <td style={{ border: '1px solid #ddd', padding: '8px' }}>
@@ -116,10 +116,24 @@ export default function Dashboard() {
                       </td>
                     </tr>
                     {expandedProductId === product.id && (
+                      
                       <tr key={`${product.id}-details`}>
                         <td colSpan={5} style={{ border: '1px solid #ddd', padding: '8px' }}>
-                          <p>Additional details for product {product.id}</p>
-                          {/* Your additional details content goes here */}
+                        
+                          <Card><b>Product title:</b> {product.title} | <b>Product id: {product.id}</b></Card>
+                            <Grid>
+                              <Grid.Cell columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 6}}>
+                                <LegacyCard title="Before Crush" sectioned>
+                                  <p>Original Details are here</p>
+                                </LegacyCard>
+                              </Grid.Cell>
+                              <Grid.Cell columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 6}}>
+                                <LegacyCard title="After Crush" sectioned>
+                                  <p>Changed Details are here</p>
+                                </LegacyCard>
+                              </Grid.Cell>
+                            </Grid>
+                     
                         </td>
                       </tr>
                     )}

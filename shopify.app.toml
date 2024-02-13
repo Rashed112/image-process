@@ -3,7 +3,7 @@
 client_id = "e8a02c709cbb6126f973d27f396029bf"
 name = "image-process"
 handle = "image-process"
-application_url = "https://agreements-pound-anywhere-concord.trycloudflare.com"
+application_url = "https://packages-gmbh-currently-adopted.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products,read_products,read_orders,read_inventory,write_discount
 
 [auth]
 redirect_urls = [
-  "https://agreements-pound-anywhere-concord.trycloudflare.com/auth/callback",
-  "https://agreements-pound-anywhere-concord.trycloudflare.com/auth/shopify/callback",
-  "https://agreements-pound-anywhere-concord.trycloudflare.com/api/auth/callback"
+  "https://packages-gmbh-currently-adopted.trycloudflare.com/auth/callback",
+  "https://packages-gmbh-currently-adopted.trycloudflare.com/auth/shopify/callback",
+  "https://packages-gmbh-currently-adopted.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
