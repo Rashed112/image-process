@@ -1,0 +1,28 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "bf927333e45d46a403c50de737e35346"
+name = "image-process"
+handle = "image-process"
+application_url = "https://aw-vault-tight-leslie.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "quickstart-20612a7e.myshopify.com"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = ""
+
+[auth]
+redirect_urls = [
+  "https://aw-vault-tight-leslie.trycloudflare.com/auth/callback",
+  "https://aw-vault-tight-leslie.trycloudflare.com/auth/shopify/callback",
+  "https://aw-vault-tight-leslie.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-01"
+
+[pos]
+embedded = false

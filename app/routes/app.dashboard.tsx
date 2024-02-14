@@ -87,8 +87,8 @@ export default function Dashboard() {
               <tbody>
                 {paginatedProducts.map((product: Product) => (
                   <React.Fragment key={product.id}>
-                    <tr>
-                      <td style={{ height: '50px', padding: '5px', border: '1px solid #ccc' }}>
+                    <tr >
+                      <td style={{ height: '50px', padding: '5px', border: '1px solid #ccc', textAlign:'center' }}>
                         {product.imageUrl && (
                           <div style={{ display: 'flex', alignItems: 'center' }}>
                             <img
@@ -108,9 +108,9 @@ export default function Dashboard() {
                       </td>
 
                       
-                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{product.isRenamed ? 'Renamed' : 'Not Renamed'}</td>
-                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{product.isCrushed ? 'Crushed' : 'Not Crushed'}</td>
-                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                      <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>{product.isRenamed ? 'Renamed' : 'Not Renamed'}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>{product.isCrushed ? 'Crushed' : 'Not Crushed'}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>
                         <Button onClick={() => handleDetailsClick(product.id)}>Details</Button>
                         <Button onClick={() => handleCrushClick(product)}>Crush</Button>
                       </td>
@@ -120,11 +120,12 @@ export default function Dashboard() {
                       <tr key={`${product.id}-details`}>
                         <td colSpan={5} style={{ border: '1px solid #ddd', padding: '8px' }}>
                         
-                          <Card><b>Product title:</b> {product.title} | <b>Product id: {product.id}</b></Card>
+                          <Card><b>Product title:</b> {product.title} </Card>
                             <Grid>
                               <Grid.Cell columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 6}}>
                                 <LegacyCard title="Before Crush" sectioned>
                                   <p>Original Details are here</p>
+                                 
                                 </LegacyCard>
                               </Grid.Cell>
                               <Grid.Cell columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 6}}>
