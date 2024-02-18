@@ -1,6 +1,9 @@
 import { PrismaClient } from "@prisma/client";
+import { mkdir, stat, writeFile } from "fs/promises";
 import { gql } from "graphql-request";
+import path from "path";
 import { apiVersion, authenticate } from "~/shopify.server";
+import { getFileNameFromUrl } from "./getFileNameFromUrl";
 
 const prisma = new PrismaClient()
 
@@ -77,6 +80,38 @@ export const fetchAndInsertProducts = async (request: Request) => {
 export const getProductsFromDB = async() => {
     try {
         const storedProducts = await prisma.product.findMany();
+
+        for (const product of storedProducts) {
+            const imageUrl = product.imageUrl;
+
+            // Store the image locally if imageUrl exists
+            if (imageUrl) {
+                const imageName = getFileNameFromUrl(imageUrl);
+                const imagePath = path.resolve(__dirname, '../public/images', imageName);
+
+                try {
+                    // Check if the image file already exists
+                    await stat(imagePath);
+
+                    // If the file exists, skip downloading and saving
+                    console.log(`Image ${imageName} already exists locally. Skipping...`);
+                } catch (error) {
+                    // If the file doesn't exist, download and save it
+                    console.log(`Downloading image ${imageName}...`);
+
+                    const imageResponse = await fetch(imageUrl);
+                    const imageBuffer = await imageResponse.arrayBuffer();
+
+                    // Ensure the directory exists
+                    await mkdir(path.dirname(imagePath), { recursive: true });
+
+                    // Write the image to the images directory
+                    await writeFile(imagePath, Buffer.from(imageBuffer));
+
+                    console.log(`Image ${imageName} saved locally.`);
+                }
+            }
+        }
         console.log('storedProdcuts from api',storedProducts)
         return storedProducts;
     } catch (error) {

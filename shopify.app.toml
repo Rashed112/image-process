@@ -3,7 +3,7 @@
 client_id = "e8a02c709cbb6126f973d27f396029bf"
 name = "image-process"
 handle = "image-process"
-application_url = "https://insertion-ns-treasurer-maple.trycloudflare.com"
+application_url = "https://software-exhibit-praise-instantly.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products,read_products,read_orders,read_inventory,write_discount
 
 [auth]
 redirect_urls = [
-  "https://insertion-ns-treasurer-maple.trycloudflare.com/auth/callback",
-  "https://insertion-ns-treasurer-maple.trycloudflare.com/auth/shopify/callback",
-  "https://insertion-ns-treasurer-maple.trycloudflare.com/api/auth/callback"
+  "https://software-exhibit-praise-instantly.trycloudflare.com/auth/callback",
+  "https://software-exhibit-praise-instantly.trycloudflare.com/auth/shopify/callback",
+  "https://software-exhibit-praise-instantly.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

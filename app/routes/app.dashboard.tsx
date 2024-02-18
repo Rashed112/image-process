@@ -3,6 +3,7 @@ import { LoaderFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { fetchAndInsertProducts, getProductsFromDB } from '../api/fetchAndInsertData';
 import { Button, Card, Grid, LegacyCard, Modal, Page } from '@shopify/polaris';
+import { getFileNameFromUrl } from '~/api/getFileNameFromUrl';
 
 export const loader: LoaderFunction = async ({ request }) => {
   await fetchAndInsertProducts(request);
@@ -54,14 +55,6 @@ export default function Dashboard() {
     setExpandedProductId(null);
   };
   
-
-  const getFileNameFromUrl = (url: string) => {
-    const path = url.split('/');
-    const fileNameWithQueryParams = path[path.length - 1];
-    const fileNameParts = fileNameWithQueryParams.split('?');
-    const fileName = fileNameParts[0];
-    return fileName;
-  };
 
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
