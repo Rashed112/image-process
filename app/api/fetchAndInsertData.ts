@@ -4,6 +4,7 @@ import { gql } from "graphql-request";
 import path from "path";
 import { apiVersion, authenticate } from "~/shopify.server";
 import { getFileNameFromUrl } from "./getFileNameFromUrl";
+import { optimizeExistingImages } from "./optimizeImages";
 
 const prisma = new PrismaClient()
 
@@ -81,6 +82,7 @@ export const getProductsFromDB = async() => {
     try {
         const storedProducts = await prisma.product.findMany();
 
+        /*
         for (const product of storedProducts) {
             const imageUrl = product.imageUrl;
 
@@ -112,6 +114,8 @@ export const getProductsFromDB = async() => {
                 }
             }
         }
+        */
+        optimizeExistingImages()
         console.log('storedProdcuts from api',storedProducts)
         return storedProducts;
     } catch (error) {
