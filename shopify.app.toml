@@ -3,7 +3,7 @@
 client_id = "e8a02c709cbb6126f973d27f396029bf"
 name = "image-process"
 handle = "image-process"
-application_url = "https://table-dsc-intranet-casual.trycloudflare.com"
+application_url = "https://this-unlike-cooking-claire.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products,read_products,read_orders,read_inventory,write_discount
 
 [auth]
 redirect_urls = [
-  "https://table-dsc-intranet-casual.trycloudflare.com/auth/callback",
-  "https://table-dsc-intranet-casual.trycloudflare.com/auth/shopify/callback",
-  "https://table-dsc-intranet-casual.trycloudflare.com/api/auth/callback"
+  "https://this-unlike-cooking-claire.trycloudflare.com/auth/callback",
+  "https://this-unlike-cooking-claire.trycloudflare.com/auth/shopify/callback",
+  "https://this-unlike-cooking-claire.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

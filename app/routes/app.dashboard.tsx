@@ -1,42 +1,73 @@
-import React, { useState } from 'react';
-import { LoaderFunction } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-import { fetchAndInsertProducts, getProductsFromDB } from '../api/fetchAndInsertData';
+import React, { FormEvent, useState } from 'react';
+import { ActionFunction, LoaderFunction, installGlobals, json } from '@remix-run/node';
+import { Form, Outlet, useLoaderData } from '@remix-run/react';
+import { fetchAndInsertProducts, getProductsFromDB } from '../models/fetchAndInsertData';
 import { Button, Card, Grid, LegacyCard, Modal, Page } from '@shopify/polaris';
-import { getFileNameFromUrl } from '~/api/getFileNameFromUrl';
+import { getFileNameFromUrl } from '~/models/getFileNameFromUrl';
+import { optimizeImageById } from '~/models/optimizeImageById.server';
+
 
 export const loader: LoaderFunction = async ({ request }) => {
   await fetchAndInsertProducts(request);
   const storedProducts = await getProductsFromDB();
-  console.log('hello from inserting into db', storedProducts);
+  //console.log('hello from inserting into db', storedProducts);
   return storedProducts;
 };
 
 interface Product {
-  id: string;
+  id: number;
   title: string;
   imageUrl: string | null;
   isRenamed: boolean;
   isCrushed: boolean;
 }
+/*
+export const action: ActionFunction = async ({ request }) => {
+  const body = new URLSearchParams(await request.text());
+  const productId = Number(body.get('productId'));
+  optimizeImageById(productId)
+
+  return json({ success: true });
+};
+*/
 
 export default function Dashboard() {
   const products = useLoaderData<typeof loader>();
-  const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
+  const [expandedProductId, setExpandedProductId] = useState<number | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedImageFileName, setSelectedImageFileName] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const handleDetailsClick = (productId: string) => {
+  const handleDetailsClick = (productId: number) => {
     setExpandedProductId((prevId) => (prevId === productId ? null : productId));
     
   };
 
-  const handleCrushClick = (product: Product) => {
-    // Handle crush button click action
-    console.log("Crush button clicked for product:", product);
-  };
+  /*const handleCrushClick = async (productId: number) => {
+    console.log(`crush button is clicked for ${productId}`)
+    
+    try {
+      //await optimizeImageById(productId)
+      
+      const response = await fetch(`../api/optimizeImage/${productId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.ok) {
+        console.log('Image optimization successful');
+      } else {
+        console.error('Failed to optimize image:', response.statusText);
+      }
+      //await action({request})
+      
+    } catch (error) {
+      console.error('Error optimizing image:', error);
+    }
+  };*/
 
   const handleCloseModal = () => {
     setSelectedImage(null);
@@ -61,6 +92,7 @@ export default function Dashboard() {
   const endIndex = startIndex + itemsPerPage;
   const paginatedProducts = products.slice(startIndex, endIndex);
 
+  
 
   return (
     <Page title="Products">
@@ -105,7 +137,9 @@ export default function Dashboard() {
                       <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>{product.isCrushed ? 'Crushed' : 'Not Crushed'}</td>
                       <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>
                         <Button onClick={() => handleDetailsClick(product.id)}>Details</Button>
-                        <Button onClick={() => handleCrushClick(product)}>Crush</Button>
+                        <Form method="post" action={`${product.id}`}>
+                          <button type="submit">Crush</button>
+                        </Form>
                       </td>
                     </tr>
                     {expandedProductId === product.id && (
@@ -195,7 +229,6 @@ export default function Dashboard() {
           )}
         </Modal.Section>
       </Modal>
-  
       
     </Page>
   );

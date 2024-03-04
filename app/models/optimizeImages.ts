@@ -1,8 +1,9 @@
 import Jimp from 'jimp';
-import { PrismaClient } from '@prisma/client';
+
 import path from 'path';
 import { mkdir, writeFile } from 'fs/promises';
 import { getFileNameFromUrl } from './getFileNameFromUrl';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 

@@ -55,17 +55,27 @@ export const fetchAndInsertProducts = async (request: Request) => {
                     const { node: product } = edge;
                     // Access image src from the correct location
                     const imageUrl = product.images.edges[0]?.node.src || null;
-            
-                    await prisma.product.create({
-                        data: {
-                            shopifyId: product.id,
-                            title: product.title,
-                            imageUrl: imageUrl, 
+                    
+                     // Check if the product with the same shopifyId already exists in the database
+                     const existingProduct = await prisma.product.findUnique({
+                        where: {
+                            shopifyId: product.id
                         }
                     });
+
+                    if(!existingProduct){
+
+                        await prisma.product.create({
+                            data: {
+                                shopifyId: product.id,
+                                title: product.title,
+                                imageUrl: imageUrl, 
+                            }
+                        });
+                    }
                 })
             );
-            console.log('edges from api',edges)
+            //console.log('edges from api',edges)
             return edges;
             
         }
@@ -115,8 +125,8 @@ export const getProductsFromDB = async() => {
             }
         }
         */
-        optimizeExistingImages()
-        console.log('storedProdcuts from api',storedProducts)
+        //optimizeExistingImages()
+        //console.log('storedProdcuts from api',storedProducts)
         return storedProducts;
     } catch (error) {
         console.error('Error fetching stored products from db: ', error);
