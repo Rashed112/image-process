@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from 'react';
-import { ActionFunction, LoaderFunction, installGlobals, json } from '@remix-run/node';
+import { ActionFunction, LoaderFunction, json } from '@remix-run/node';
 import { Form, Outlet, useLoaderData } from '@remix-run/react';
 import { fetchAndInsertProducts, getProductsFromDB } from '../models/fetchAndInsertData';
 import { Button, Card, Grid, LegacyCard, Modal, Page } from '@shopify/polaris';
@@ -102,8 +102,7 @@ export default function Dashboard() {
             <table style={{ borderCollapse: 'collapse', width: '100%' }}>
               <thead>
                 <tr>
-                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>File Name</th>
-                  
+                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>File Name</th>                
                   <th style={{ border: '1px solid #ddd', padding: '8px' }}>Renamed</th>
                   <th style={{ border: '1px solid #ddd', padding: '8px' }}>Crushed</th>
                   <th style={{ border: '1px solid #ddd', padding: '8px' }}>Actions</th>
@@ -137,7 +136,8 @@ export default function Dashboard() {
                       <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>{product.isCrushed ? 'Crushed' : 'Not Crushed'}</td>
                       <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>
                         <Button onClick={() => handleDetailsClick(product.id)}>Details</Button>
-                        <Form method="post" action={`${product.id}`}>
+                        <Form method="post">
+                          <input type="hidden" name="productId" defaultValue={product.id}></input>
                           <button type="submit">Crush</button>
                         </Form>
                       </td>
@@ -234,3 +234,13 @@ export default function Dashboard() {
   );
     
 }
+
+export const action: ActionFunction = async ({ request, params }) => {
+  const form = await request.formData();
+  const productId = form.get("productId");
+  
+  console.log(`product id from app-dashboard-tsx: ${productId}`)
+
+  optimizeImageById(Number(productId))
+  return new Response('Image optimized successfully', { status: 200 });
+};
