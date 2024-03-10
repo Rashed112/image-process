@@ -5,6 +5,7 @@ import path from "path";
 import { apiVersion, authenticate } from "~/shopify.server";
 import { getFileNameFromUrl } from "./getFileNameFromUrl";
 import { optimizeExistingImages } from "./optimizeImages";
+import { getImageInfo } from "./getImageInfo";
 
 const prisma = new PrismaClient()
 
@@ -44,7 +45,7 @@ export const fetchAndInsertProducts = async (request: Request) => {
                 body: query,
             }
         );
-            console.log(response.status)
+            
         if(response.ok){
             const data = await response.json();
             
@@ -55,7 +56,7 @@ export const fetchAndInsertProducts = async (request: Request) => {
                     const { node: product } = edge;
                     // Access image src from the correct location
                     const imageUrl = product.images.edges[0]?.node.src || null;
-                    
+                    const imageInfo = imageUrl ? await getImageInfo(imageUrl) : null;
                      // Check if the product with the same shopifyId already exists in the database
                      const existingProduct = await prisma.product.findUnique({
                         where: {
@@ -70,6 +71,10 @@ export const fetchAndInsertProducts = async (request: Request) => {
                                 shopifyId: product.id,
                                 title: product.title,
                                 imageUrl: imageUrl, 
+                                width: imageInfo?.width || null,
+                                height: imageInfo?.height || null,
+                                mimeType: imageInfo?.mimeType || null,
+                                imageSize: imageInfo?.imageSize || null,
                             }
                         });
                     }

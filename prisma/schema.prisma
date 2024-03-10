@@ -22,8 +22,15 @@ model Session {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  shopifyId   String   @unique
-  title       String
-  imageUrl    String?  
+  id                  Int        @id @default(autoincrement())
+  shopifyId           String     @unique
+  title               String
+  imageUrl            String?  
+  width               Int?
+  optimizedWidth      Int?
+  height              Int?
+  optimizedHeight     Int?
+  imageSize           Float?
+  optimizedImageSize  Float?   
+  mimeType            String?
 }

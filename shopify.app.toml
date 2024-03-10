@@ -3,7 +3,7 @@
 client_id = "e8a02c709cbb6126f973d27f396029bf"
 name = "image-process"
 handle = "image-process"
-application_url = "https://gospel-procedure-tragedy-pub.trycloudflare.com"
+application_url = "https://carter-auto-opportunity-badge.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products,read_products,read_orders,read_inventory,write_discount
 
 [auth]
 redirect_urls = [
-  "https://gospel-procedure-tragedy-pub.trycloudflare.com/auth/callback",
-  "https://gospel-procedure-tragedy-pub.trycloudflare.com/auth/shopify/callback",
-  "https://gospel-procedure-tragedy-pub.trycloudflare.com/api/auth/callback"
+  "https://carter-auto-opportunity-badge.trycloudflare.com/auth/callback",
+  "https://carter-auto-opportunity-badge.trycloudflare.com/auth/shopify/callback",
+  "https://carter-auto-opportunity-badge.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

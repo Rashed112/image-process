@@ -1,73 +1,77 @@
 import React, { FormEvent, useState } from 'react';
 import { ActionFunction, LoaderFunction, json } from '@remix-run/node';
-import { Form, Outlet, useLoaderData } from '@remix-run/react';
+import { Form, Outlet, useActionData, useLoaderData } from '@remix-run/react';
 import { fetchAndInsertProducts, getProductsFromDB } from '../models/fetchAndInsertData';
-import { Button, Card, Grid, LegacyCard, Modal, Page } from '@shopify/polaris';
+import { Button, Card, Grid, LegacyCard, Modal, Page, Toast } from '@shopify/polaris';
 import { getFileNameFromUrl } from '~/models/getFileNameFromUrl';
 import { optimizeImageById } from '~/models/optimizeImageById.server';
 
 
-export const loader: LoaderFunction = async ({ request }) => {
-  await fetchAndInsertProducts(request);
-  const storedProducts = await getProductsFromDB();
-  //console.log('hello from inserting into db', storedProducts);
-  return storedProducts;
-};
+
 
 interface Product {
   id: number;
   title: string;
   imageUrl: string | null;
+  width: number | null;
+  optimizedWidth: number | null;
+  height: number | null;
+  optimizedHeight: number | null;
+  imageSize: number | null;
+  optimizedImageSize: number | null;
+  mimeType: string | null;
   isRenamed: boolean;
   isCrushed: boolean;
-}
-/*
-export const action: ActionFunction = async ({ request }) => {
-  const body = new URLSearchParams(await request.text());
-  const productId = Number(body.get('productId'));
-  optimizeImageById(productId)
 
-  return json({ success: true });
+}
+
+export const action: ActionFunction = async ({ request }) => {
+  const form = await request.formData();
+  const productId = form.get("productId");
+  const actionType = form.get("actionType");
+
+    const imageDetails = await optimizeImageById(Number(productId));
+    //toast.success('Image optimized successfully!');
+    //console.log(imageDetails);
+    if(imageDetails){
+      return json({
+        message: "Successfully optimized",
+      })
+    }
+    else {
+      return json({
+        message: "Optimization failed",
+      })
+    }
+    
+ 
+    //return new Response('Action completed successfully', { status: 200 });
 };
-*/
+
+export const loader: LoaderFunction = async ({ request }) => {
+  await fetchAndInsertProducts(request);
+  const products = await getProductsFromDB();
+  //console.log('hello from inserting into db', products);
+  return products;
+};
+
+
+
 
 export default function Dashboard() {
   const products = useLoaderData<typeof loader>();
+
   const [expandedProductId, setExpandedProductId] = useState<number | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedImageFileName, setSelectedImageFileName] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  
 
   const handleDetailsClick = (productId: number) => {
     setExpandedProductId((prevId) => (prevId === productId ? null : productId));
     
   };
-
-  /*const handleCrushClick = async (productId: number) => {
-    console.log(`crush button is clicked for ${productId}`)
-    
-    try {
-      //await optimizeImageById(productId)
-      
-      const response = await fetch(`../api/optimizeImage/${productId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      if (response.ok) {
-        console.log('Image optimization successful');
-      } else {
-        console.error('Failed to optimize image:', response.statusText);
-      }
-      //await action({request})
-      
-    } catch (error) {
-      console.error('Error optimizing image:', error);
-    }
-  };*/
 
   const handleCloseModal = () => {
     setSelectedImage(null);
@@ -85,12 +89,18 @@ export default function Dashboard() {
     setCurrentPage(nextPage);
     setExpandedProductId(null);
   };
-  
 
-  const totalPages = Math.ceil(products.length / itemsPerPage);
+  /*
+  const findImageInfoById = (productId: number) => {
+    return originalImageInfo.find((image: Image) => image.productId === productId);
+  };
+  */
+
+  const totalPages = products ? Math.ceil(products.length / itemsPerPage) : 0;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedProducts = products.slice(startIndex, endIndex);
+  const paginatedProducts = products ? products.slice(startIndex, endIndex) : [];
+
 
   
 
@@ -135,33 +145,45 @@ export default function Dashboard() {
                       <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>{product.isRenamed ? 'Renamed' : 'Not Renamed'}</td>
                       <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>{product.isCrushed ? 'Crushed' : 'Not Crushed'}</td>
                       <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>
-                        <Button onClick={() => handleDetailsClick(product.id)}>Details</Button>
-                        <Form method="post">
-                          <input type="hidden" name="productId" defaultValue={product.id}></input>
-                          <button type="submit">Crush</button>
-                        </Form>
+                      <button onClick={() => handleDetailsClick(product.id)}>Details</button>
+                          <Form method="post">
+                            <input type="hidden" name="productId" value={product.id} />
+                            <input type="hidden" name="actionType" value="crush" />
+                            <button type="submit">Crush</button>
+                            
+                          </Form>
+
                       </td>
                     </tr>
                     {expandedProductId === product.id && (
-                      
                       <tr key={`${product.id}-details`}>
                         <td colSpan={5} style={{ border: '1px solid #ddd', padding: '8px' }}>
-                        
-                          <Card><b>Product title:</b> {product.title} </Card>
-                            <Grid>
-                              <Grid.Cell columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 6}}>
-                                <LegacyCard title="Before Crush" sectioned>
-                                  <p>Original Details are here</p>
-                                 
-                                </LegacyCard>
-                              </Grid.Cell>
-                              <Grid.Cell columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 6}}>
-                                <LegacyCard title="After Crush" sectioned>
-                                  <p>Changed Details are here</p>
-                                </LegacyCard>
-                              </Grid.Cell>
-                            </Grid>
-                     
+                          <Card>
+                            <p>Product title: {product.title}</p>
+                            <p>Product id: {product.id} </p>
+                            <p>Product Image type: {product.mimeType} </p>
+                          </Card>
+                          <Grid>
+                          <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                            <LegacyCard title="Before Crush" sectioned>
+                             
+                                
+                                  <p>Image Width: {product?.width}</p>
+                                  <p>Image Height: {product?.height}</p>
+                                  <p>Image File Size: {product?.imageSize} KB</p>
+                                
+                              
+                            </LegacyCard>
+                          </Grid.Cell>
+                            <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
+                              <LegacyCard title="After Crush" sectioned>
+                               
+                                <p>Optimized Image Width: {product?.optimizedWidth} </p>
+                                <p>Optimized Image Height: {product?.optimizedHeight}</p>
+                                <p>Optimized Image Size: {product?.optimizedImageSize} KB</p>
+                              </LegacyCard>
+                            </Grid.Cell>
+                          </Grid>
                         </td>
                       </tr>
                     )}
@@ -234,13 +256,3 @@ export default function Dashboard() {
   );
     
 }
-
-export const action: ActionFunction = async ({ request, params }) => {
-  const form = await request.formData();
-  const productId = form.get("productId");
-  
-  console.log(`product id from app-dashboard-tsx: ${productId}`)
-
-  optimizeImageById(Number(productId))
-  return new Response('Image optimized successfully', { status: 200 });
-};
