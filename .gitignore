@@ -4,9 +4,10 @@ node_modules
 /build
 /app/build
 /public/build/
+/public/optimized_images
+/public/original_images
 /public/_dev
 /app/public/build
-/app/public/optimized_images
 /prisma/dev.sqlite
 /prisma/dev.sqlite-journal
 database.sqlite

@@ -4,9 +4,7 @@ import { Form, Outlet, useActionData, useLoaderData } from '@remix-run/react';
 import { fetchAndInsertProducts, getProductsFromDB } from '../models/fetchAndInsertData';
 import { Button, Card, Grid, LegacyCard, Modal, Page, Toast } from '@shopify/polaris';
 import { getFileNameFromUrl } from '~/models/getFileNameFromUrl';
-import { optimizeImageById } from '~/models/optimizeImageById.server';
-
-
+import { optimizeImageById } from '~/models/optimizeImageById';
 
 
 interface Product {
@@ -29,11 +27,12 @@ export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
   const productId = form.get("productId");
   const actionType = form.get("actionType");
-
+  
     const imageDetails = await optimizeImageById(Number(productId));
     //toast.success('Image optimized successfully!');
     //console.log(imageDetails);
     if(imageDetails){
+      //shopify.toast.show('Successfully optimized');
       return json({
         message: "Successfully optimized",
       })
@@ -73,6 +72,10 @@ export default function Dashboard() {
     
   };
 
+  const handleCrushClick = () => {
+    shopify.toast.show('Added to optimization queue...');
+  }
+
   const handleCloseModal = () => {
     setSelectedImage(null);
     setSelectedImageFileName(null);
@@ -90,12 +93,6 @@ export default function Dashboard() {
     setExpandedProductId(null);
   };
 
-  /*
-  const findImageInfoById = (productId: number) => {
-    return originalImageInfo.find((image: Image) => image.productId === productId);
-  };
-  */
-
   const totalPages = products ? Math.ceil(products.length / itemsPerPage) : 0;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -106,7 +103,9 @@ export default function Dashboard() {
 
   return (
     <Page title="Products">
+
       <div style={{ alignItems: 'center', flexDirection: 'column' }}>
+        
         <div style={{ padding: '16px' }}>
           <Card>
             <table style={{ borderCollapse: 'collapse', width: '100%' }}>
@@ -140,19 +139,19 @@ export default function Dashboard() {
                           <div style={{ width: '50px', height: '50px', backgroundColor: '#f0f0f0' }}></div>
                         )}
                       </td>
-
                       
                       <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>{product.isRenamed ? 'Renamed' : 'Not Renamed'}</td>
                       <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>{product.isCrushed ? 'Crushed' : 'Not Crushed'}</td>
                       <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>
                       <button onClick={() => handleDetailsClick(product.id)}>Details</button>
-                          <Form method="post">
-                            <input type="hidden" name="productId" value={product.id} />
-                            <input type="hidden" name="actionType" value="crush" />
-                            <button type="submit">Crush</button>
-                            
-                          </Form>
+                      {product.imageUrl && 
+                        <Form method="post">
+                          <input type="hidden" name="productId" value={product.id} />
+                          <input type="hidden" name="actionType" value="crush" />
+                          <button type="submit" onClick={handleCrushClick}>Crush</button>
 
+                        </Form>
+                      }
                       </td>
                     </tr>
                     {expandedProductId === product.id && (
@@ -251,7 +250,6 @@ export default function Dashboard() {
           )}
         </Modal.Section>
       </Modal>
-      
     </Page>
   );
     

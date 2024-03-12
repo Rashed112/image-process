@@ -26,11 +26,23 @@ export const optimizeImageById = async (productId:number) => {
             const originalDimensions = { width: originalImage.getWidth(), height: originalImage.getHeight() };
             const extension = getFileNameFromUrl(imageUrl).split('.').pop()?.toLowerCase();
 
+            // Construct the file path to save the optimized image with the same extension
+            const imageName = `${product.id}.${extension}`;
+
             // Get the MIME type based on the original extension
             const originalMIMEType = extension === 'jpg' || extension === 'jpeg' ? Jimp.MIME_JPEG : Jimp.MIME_PNG;
 
             // Get the buffer asynchronously
             const originalImageBuffer = await originalImage.getBufferAsync(originalMIMEType);
+
+            const originalImagePath = path.resolve(__dirname, '../public/original_images', imageName);
+
+            // Ensure the directory exists
+            await mkdir(path.dirname(originalImagePath), { recursive: true });
+
+            // Save the optimized image locally
+            await writeFile(originalImagePath, originalImageBuffer);
+            
 
             const targetWidth = Math.round(0.8 * originalImage.getWidth());
             // Optimize the image (example: resize and quality)
@@ -46,7 +58,7 @@ export const optimizeImageById = async (productId:number) => {
             const optimizedImageSize = Number((optimizedImageBuffer.length / 1024).toFixed(2));
 
             // Construct the file path to save the optimized image with the same extension
-            const imageName = `${product.id}.${extension}`;
+            //const imageName = `${product.id}.${extension}`;
             const imagePath = path.resolve(__dirname, '../public/optimized_images', imageName);
 
             // Ensure the directory exists
@@ -78,7 +90,6 @@ export const optimizeImageById = async (productId:number) => {
             return imageDetails;
         }
     
-
         console.log('Optimization complete');
         return null;
     } catch (error) {
