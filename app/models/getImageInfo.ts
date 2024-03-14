@@ -2,8 +2,8 @@ import Jimp from 'jimp';
 import { getFileNameFromUrl } from '~/models/getFileNameFromUrl';
 
 interface ImageInfo {
-    width: number; 
-    height: number;
+    //width: number; 
+    //height: number;
     imageSize: number;
     mimeType: string;
 }
@@ -15,8 +15,8 @@ export const getImageInfo = async (imageUrl: string) => {
     const image = await Jimp.read(imageUrl);
 
     const extension = getFileNameFromUrl(imageUrl).split('.').pop()?.toLowerCase();
-    const width = image.getWidth();
-    const height = image.getHeight();
+    //const width = image.getWidth();
+    //const height = image.getHeight();
     // Get the MIME type based on the original extension
     const mimeType = extension === 'jpg' || extension === 'jpeg' ? Jimp.MIME_JPEG : Jimp.MIME_PNG;
 
@@ -26,8 +26,8 @@ export const getImageInfo = async (imageUrl: string) => {
     //console.log('Image Info:', width, height, `${(imageBuffer.length / 1024).toFixed(2)} KB`, mimeType);
 
     const imageInfo: ImageInfo = {
-        width,
-        height,
+        //width,
+        //height,
         imageSize: parseFloat((imageBuffer.length / 1024).toFixed(2)),
         mimeType,
     };

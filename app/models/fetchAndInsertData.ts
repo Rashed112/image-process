@@ -19,6 +19,8 @@ export const query = gql`
                     images(first: 1){
                         edges {
                             node {
+                                width 
+                                height
                                 src
                             }
                         }
@@ -56,7 +58,11 @@ export const fetchAndInsertProducts = async (request: Request) => {
                     const { node: product } = edge;
                     // Access image src from the correct location
                     const imageUrl = product.images.edges[0]?.node.src || null;
+                    const width = product.images.edges[0]?.node.width || null;
+                    const height = product.images.edges[0]?.node.height || null;
                     const imageInfo = imageUrl ? await getImageInfo(imageUrl) : null;
+                   // const extension = getFileNameFromUrl(imageUrl).split('.').pop()?.toLowerCase();
+                   // console.log('image extension', extension)
                      // Check if the product with the same shopifyId already exists in the database
                      const existingProduct = await prisma.product.findUnique({
                         where: {
@@ -71,8 +77,11 @@ export const fetchAndInsertProducts = async (request: Request) => {
                                 shopifyId: product.id,
                                 title: product.title,
                                 imageUrl: imageUrl, 
-                                width: imageInfo?.width || null,
-                                height: imageInfo?.height || null,
+                                width: width,
+                                height: height,
+                                //mimeType: extension,
+                               // width: imageInfo?.width || null,
+                                //height: imageInfo?.height || null,
                                 mimeType: imageInfo?.mimeType || null,
                                 imageSize: imageInfo?.imageSize || null,
                             }

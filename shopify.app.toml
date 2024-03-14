@@ -3,7 +3,7 @@
 client_id = "e8a02c709cbb6126f973d27f396029bf"
 name = "image-process"
 handle = "image-process"
-application_url = "https://thereof-selected-bolivia-assembled.trycloudflare.com"
+application_url = "https://portable-pending-facts-x.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products,read_products,read_orders,read_inventory,write_discount
 
 [auth]
 redirect_urls = [
-  "https://thereof-selected-bolivia-assembled.trycloudflare.com/auth/callback",
-  "https://thereof-selected-bolivia-assembled.trycloudflare.com/auth/shopify/callback",
-  "https://thereof-selected-bolivia-assembled.trycloudflare.com/api/auth/callback"
+  "https://portable-pending-facts-x.trycloudflare.com/auth/callback",
+  "https://portable-pending-facts-x.trycloudflare.com/auth/shopify/callback",
+  "https://portable-pending-facts-x.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

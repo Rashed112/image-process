@@ -22,6 +22,7 @@ export const optimizeImageById = async (productId:number) => {
         if (imageUrl) {
             // Fetch the image from the URL
             const originalImage = await Jimp.read(imageUrl);
+            //console.log('original Image --->', originalImage);
 
             const originalDimensions = { width: originalImage.getWidth(), height: originalImage.getHeight() };
             const extension = getFileNameFromUrl(imageUrl).split('.').pop()?.toLowerCase();
@@ -37,6 +38,8 @@ export const optimizeImageById = async (productId:number) => {
 
             const originalImagePath = path.resolve(__dirname, '../public/original_images', imageName);
 
+            
+            
             // Ensure the directory exists
             await mkdir(path.dirname(originalImagePath), { recursive: true });
 
