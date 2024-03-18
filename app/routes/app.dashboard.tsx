@@ -28,7 +28,7 @@ export const action: ActionFunction = async ({ request }) => {
   const productId = form.get("productId");
   const actionType = form.get("actionType");
   
-    const imageDetails = await optimizeImageById(Number(productId));
+    const imageDetails = await optimizeImageById(request, Number(productId));
     //toast.success('Image optimized successfully!');
     //console.log(imageDetails);
     if(imageDetails){
