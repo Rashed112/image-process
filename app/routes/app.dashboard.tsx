@@ -11,6 +11,7 @@ interface Product {
   id: number;
   title: string;
   imageUrl: string | null;
+  imageId: string | null;
   width: number | null;
   optimizedWidth: number | null;
   height: number | null;

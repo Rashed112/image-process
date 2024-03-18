@@ -19,6 +19,7 @@ export const query = gql`
                     images(first: 1){
                         edges {
                             node {
+                                id
                                 width 
                                 height
                                 src
@@ -60,6 +61,8 @@ export const fetchAndInsertProducts = async (request: Request) => {
                     const imageUrl = product.images.edges[0]?.node.src || null;
                     const width = product.images.edges[0]?.node.width || null;
                     const height = product.images.edges[0]?.node.height || null;
+                    const imageId = product.images.edges[0]?.node.id || null;
+                    //console.log('image Id: ', imageId)
                     const imageInfo = imageUrl ? await getImageInfo(imageUrl) : null;
                    // const extension = getFileNameFromUrl(imageUrl).split('.').pop()?.toLowerCase();
                    // console.log('image extension', extension)
@@ -79,6 +82,7 @@ export const fetchAndInsertProducts = async (request: Request) => {
                                 imageUrl: imageUrl, 
                                 width: width,
                                 height: height,
+                                imageId: imageId,
                                 //mimeType: extension,
                                // width: imageInfo?.width || null,
                                 //height: imageInfo?.height || null,
@@ -146,4 +150,13 @@ export const getProductsFromDB = async() => {
         console.error('Error fetching stored products from db: ', error);
         throw error;
     }
+}
+
+function extractProductIdFromUrl(url: string) {
+    const regex = /\/Product\/(\d+)/;
+    const match = url.match(regex);
+    if (match && match[1]) {
+        return parseInt(match[1]);
+    }
+    return null;
 }

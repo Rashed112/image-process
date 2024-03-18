@@ -108,7 +108,7 @@ export const updateProductImage = async (
 */
 
 
-  export const uploadOptimizedProductImage = async (request: Request, shop: string, accessToken: string, productShopifyId: number, optimizedImageBuffer: Buffer) => {
+  export const uploadOptimizedProductImage = async (request: Request, shop: string, accessToken: string, productShopifyId: number, imageId:string,  optimizedImageBuffer: Buffer) => {
     try {
         const {admin, session} = await authenticate.admin(request);
         const base64Image = Buffer.from(optimizedImageBuffer).toString('base64');
@@ -129,7 +129,7 @@ export const updateProductImage = async (
                 body: body
             }
         );
-
+/*
         if (!response.ok) {
             const errorResponseData = await response.text();
             if (errorResponseData.includes('Invalid Product')) {
@@ -137,7 +137,7 @@ export const updateProductImage = async (
             }
             throw new Error(`Failed to upload optimized product image. Status: ${response.status}. Response: ${errorResponseData}`);
         }
-        
+*/       
         const responseData = await response.json();
 
         if (!response.ok) {
@@ -145,8 +145,10 @@ export const updateProductImage = async (
         }
 
         const image = new admin.rest.resources.Image({session: session});
-  
+        const productImageId = extractProductIdFromUrl(imageId)
       image.product_id = productShopifyId;
+      //console.log('extracted image id ', extractProductIdFromUrl(imageId));
+      //image.id = productImageId;
       image.src = responseData.image.src;
       image.position = 1;
   
@@ -159,3 +161,12 @@ export const updateProductImage = async (
         throw error;
     }
 };
+
+function extractProductIdFromUrl(url: string) {
+    const regex = /\/(\d+)$/;
+    const match = url.match(regex);
+    if (match && match[1]) {
+        return parseInt(match[1]);
+    }
+    return null;
+}

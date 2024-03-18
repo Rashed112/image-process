@@ -25,7 +25,8 @@ model Product {
   id                  Int        @id @default(autoincrement())
   shopifyId           String     @unique
   title               String
-  imageUrl            String?  
+  imageUrl            String?
+  imageId             String?  
   width               Int?
   optimizedWidth      Int?
   height              Int?

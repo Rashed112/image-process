@@ -83,10 +83,11 @@ export const optimizeImageById = async (request: Request, productId:number) => {
             };
 
             const productShopifyId = extractProductIdFromUrl(product.shopifyId);
-
+            console.log("image id: ", product.imageId);
+            
             // Upload the optimized image and get the updated image URL
             //const updatedImageUrl = await uploadOptimizedProductImage(shop, accessToken!, productShopifyId!, optimizedImageBuffer);
-            await uploadOptimizedProductImage(request, shop, accessToken!, productShopifyId!, optimizedImageBuffer);
+            await uploadOptimizedProductImage(request, shop, accessToken!, productShopifyId!, product.imageId!, optimizedImageBuffer);
             // Update the product image URL with the URL of the optimized image
            // await updateProductImage(shop, accessToken!, product.id, imageUrl, updatedImageUrl);
             //await updateProductImage(request, productShopifyId!, updatedImageUrl);
@@ -101,11 +102,11 @@ export const optimizeImageById = async (request: Request, productId:number) => {
     }
 };
 
-function extractProductIdFromUrl(url:string) {
+function extractProductIdFromUrl(url: string) {
     const regex = /\/Product\/(\d+)/;
     const match = url.match(regex);
     if (match && match[1]) {
         return parseInt(match[1]);
     }
-    return null
+    return null;
 }

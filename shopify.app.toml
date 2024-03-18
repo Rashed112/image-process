@@ -3,7 +3,7 @@
 client_id = "e8a02c709cbb6126f973d27f396029bf"
 name = "image-process"
 handle = "image-process"
-application_url = "https://he-anonymous-rec-reply.trycloudflare.com"
+application_url = "https://must-through-oman-complicated.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products,read_products,read_orders,read_inventory,write_discount
 
 [auth]
 redirect_urls = [
-  "https://he-anonymous-rec-reply.trycloudflare.com/auth/callback",
-  "https://he-anonymous-rec-reply.trycloudflare.com/auth/shopify/callback",
-  "https://he-anonymous-rec-reply.trycloudflare.com/api/auth/callback"
+  "https://must-through-oman-complicated.trycloudflare.com/auth/callback",
+  "https://must-through-oman-complicated.trycloudflare.com/auth/shopify/callback",
+  "https://must-through-oman-complicated.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
