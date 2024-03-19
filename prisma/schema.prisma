@@ -34,4 +34,5 @@ model Product {
   imageSize           Float?
   optimizedImageSize  Float?   
   mimeType            String?
+  isCrushed           Boolean @default(false)
 }

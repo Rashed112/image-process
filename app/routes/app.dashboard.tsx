@@ -19,8 +19,8 @@ interface Product {
   imageSize: number | null;
   optimizedImageSize: number | null;
   mimeType: string | null;
-  isRenamed: boolean;
   isCrushed: boolean;
+  isRenamed: boolean;
 
 }
 
@@ -145,7 +145,7 @@ export default function Dashboard() {
                       <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>{product.isCrushed ? 'Crushed' : 'Not Crushed'}</td>
                       <td style={{ border: '1px solid #ddd', padding: '8px', textAlign:'center' }}>
                       <button onClick={() => handleDetailsClick(product.id)}>Details</button>
-                      {product.imageUrl && 
+                      {product.imageUrl && !product.isCrushed && 
                         <Form method="post">
                           <input type="hidden" name="productId" value={product.id} />
                           <input type="hidden" name="actionType" value="crush" />

@@ -146,14 +146,14 @@ export const updateProductImage = async (
 
         const image = new admin.rest.resources.Image({session: session});
         const productImageId = extractProductIdFromUrl(imageId)
-      image.product_id = productShopifyId;
-      //console.log('extracted image id ', extractProductIdFromUrl(imageId));
-      //image.id = productImageId;
-      image.src = responseData.image.src;
-      image.position = 1;
-  
-      // Save the image, updating the existing image
-      await image.save({ update: true });
+        image.product_id = productShopifyId;
+        //console.log('extracted image id ', extractProductIdFromUrl(imageId));
+        //image.id = productImageId;
+        image.src = responseData.image.src;
+        image.position = 1;
+    
+        // Save the image, updating the existing image
+        await image.save({ update: true });
         
         //return responseData.image.src; // Return the URL of the uploaded image
     } catch (error) {

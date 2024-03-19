@@ -70,9 +70,10 @@ export const optimizeImageById = async (request: Request, productId:number) => {
             await prisma.product.update({
                 where: { id: productId },
                 data: {
-                    optimizedWidth,
-                    optimizedHeight,
-                    optimizedImageSize,
+                    optimizedWidth: optimizedWidth,
+                    optimizedHeight: optimizedHeight,
+                    optimizedImageSize: optimizedImageSize,
+                    isCrushed: true,
                 },
             });
 
